@@ -235,3 +235,47 @@ No todos los módulos de Windows comienzan con win_*. Algunos módulos básicos 
 
 
 
+Paquetes adiconales para bastion.
+      
+      [root@bastion 0 ~]# yum -y install python-devel krb5-devel krb5-libs krb5-workstation python-pip gcc
+      [root@bastion 0 ~]# pip install "pywinrm>=0.2.2"
+
+Validar con ping.
+
+      [root@bastion 0 ~]# ansible windows -m win_ping
+      ad1.5a16.internal | SUCCESS => {
+          "changed": false, 
+          "ping": "pong"
+      }
+      [root@bastion 0 ~]# 
+
+
+Archivo de configuración (hosts)
+
+      [root@bastion 0 ~]# cat /etc/ansible/hosts
+      [all:vars]
+      timeout=60
+      ansible_become=yes
+      ansible_user=ec2-user
+
+      [all:children]
+      support
+      windows
+
+      [support]
+      support1.5a16.internal ssh_host=support1.5a16.internal
+
+      [windows]
+      ad1.5a16.internal ssh_host=ad1.5a16.example.opentlc.com ansible_password=jVMijRwLbI02gFCo2xkjlZ9lxEA7bm7zgg==
+
+      [windows:vars]
+      ansible_connection=winrm
+      ansible_user=Administrator
+      ansible_winrm_server_cert_validation=ignore
+      ansible_become=false
+      [root@bastion 0 ~]# 
+
+
+
+      
+
